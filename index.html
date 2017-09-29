@@ -1,0 +1,421 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>RxJS</title>
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/black.css">
+
+		<!-- Theme used for syntax highlighting of code -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<section>
+					<h1>RxJS</h1>
+					ReactiveX
+				</section>
+				<section>
+					<img class="stretch" data-src="content/whaaat.gif">
+				</section>
+
+				<section>
+					<h2>Data flow</h2>
+					RxJS is a library for reactive programming using Observables, to make it easier to compose asynchronous or callback-based code
+				</section>
+
+				<section>
+					<table>
+				    	<thead>
+							<tr>
+					            <th></th>
+					            <th>Single</th>
+					            <th>Multiple</th>
+					        </tr>
+						</thead>
+				        <tbody>
+							<tr>
+					            <td>Pull</td>
+					            <td>Function</td>
+					            <td>Iterator</td>
+					        </tr>
+					        <tr>
+					            <td>Push</td>
+					            <td>Promise</td>
+					            <td></td>
+					        </tr>
+						</tbody>
+			    	</table>
+				</section>
+
+				<section>
+					<h1>Pull</h1>
+				</section>
+
+				<section>
+					Function
+					<pre><code class="TypeScript" data-trim contenteditable>
+						function myFunction(someVal){
+						    return someVal*2
+						}
+						myFunction(5) // 10
+					</code></pre>
+				</section>
+
+				<section>
+					Iterators and generators
+					<pre><code class="TypeScript" data-trim contenteditable>
+function* myFunction() {
+    yield 5;
+    yield 10;
+    yield 15;
+}
+
+var generator = myFunction();
+
+console.log(generator.next().value);
+console.log(generator.next().value);
+console.log(generator.next().value);
+					</code></pre>
+				</section>
+
+				<section>
+					<h1>Push</h1>
+				</section>
+
+				<section>
+					<section>
+						Promise
+						<pre><code class="TypeScript" data-trim contenteditable>
+							let willIGetNewPhone = new Promise((resolve, reject) => {
+							    setTimeout(() => {
+							        resolve(true)
+							    }, 1000)
+							});
+
+							willIGetNewPhone.then(value => {
+							    console.log("Got a new phone!") //prints after 1 sec
+							});
+						</code></pre>
+					</section>
+					<section>
+
+					</section>
+				</section>
+					<img class="fragment" class="stretch" data-src="content/broken.gif">
+				<section>
+					<table>
+				    	<thead>
+							<tr>
+					            <th></th>
+					            <th>Single</th>
+					            <th>Multiple</th>
+					        </tr>
+						</thead>
+				        <tbody>
+							<tr>
+					            <td>Pull</td>
+					            <td>Function</td>
+					            <td>Iterator</td>
+					        </tr>
+					        <tr>
+					            <td>Push</td>
+					            <td>Promise</td>
+					            <td class="fragment">Observable</td>
+					        </tr>
+						</tbody>
+			    	</table>
+				</section>
+
+				<section>
+					Now entering RxJS<br />
+					<img class="fragment" class="stretch" data-src="content/rxjs.gif">
+				</section>
+
+
+				<section>
+					Observable
+					<pre><code class="TypeScript" data-trim contenteditable>
+var myObservable =  new Observable(observer => {
+    observer.next(42);
+    observer.next(100);
+    setTimeout(() => {
+        observer.next(200);
+    }, 1000);
+});
+
+myObservable.subscribe(next => {
+    console.log(next)
+});
+					</code></pre>
+				</section>
+
+				<section>
+					<!-- "hot" vs "cold" observables<br /><br /> -->
+					.subscribe() and unSubscribe()
+					<pre><code class="TypeScript" data-trim contenteditable>
+						observable.subscribe(nextHandler, errorHandler, completionHandler)
+
+						let subscription = observable.subscribe(......)
+						subscription.unsubscribe()
+					</code></pre>
+				</section>
+
+
+
+				<section>
+					Subject
+					<pre><code class="TypeScript" data-trim contenteditable>
+let mySubject = new Subject();
+
+mySubject.subscribe(next => {
+    console.log(next)
+});
+
+mySubject.next(42);
+mySubject.next(200);
+setTimeout(() => {
+    mySubject.next(500);
+}, 1000);
+					</code></pre>
+				</section>
+
+				<section>
+					<section>
+						Easy to use it wrong
+						<img class="stretch" data-src="content/wrong.gif">
+					</section>
+					<section>
+						Inncorrect
+						<pre><code class="TypeScript" data-trim contenteditable>
+const subject = new Subject();
+button.addEventListener(‘click’, () => subject.next('click');
+subject.subscribe(x => console.log(x));
+						</code></pre>
+						<br />
+						<span class="fragment">Correct</span>
+						<pre class="fragment"><code class="TypeScript" data-trim contenteditable>
+const clicks = new Observable(observer => {
+    button.addEventListener('click', evt => observer.next(evt));
+});
+						</code></pre>
+
+					</section>
+
+				</section>
+
+				<section>
+					<section>
+						Operators
+						<pre><code class="TypeScript" data-trim contenteditable>
+							myObservable/mySubject
+							.
+							.subscribe
+
+							.map()
+							.filter()
+							.skip()
+							.delay()
+							.throttleTime()
+							.retry()
+						</code></pre>
+					</section>
+
+					<section>
+						.map(function)
+						<img class="stretch" data-src="content/operators/map.png">
+					</section>
+
+					<section>
+						.filter(function)
+						<img class="stretch" data-src="content/operators/filter.png">
+					</section>
+
+					<section>
+						.skip(number)
+						.skipLast(number)
+						<img class="stretch" data-src="content/operators/skip.png">
+					</section>
+
+					<section>
+						.delay(ms)
+						<img class="stretch" data-src="content/operators/delay.png">
+					</section>
+
+					<section>
+						.throttleTime(ms)
+						<img class="stretch" data-src="content/operators/debounce.png">
+					</section>
+
+					<section>
+						.retry(number)
+						<img class="stretch" data-src="content/operators/retry.png">
+					</section>
+
+
+
+				</section>
+
+
+				<section>
+					Async/await is NOT a part of this
+					<pre><code class="TypeScript" data-trim contenteditable>
+async function getBackends() {
+    const someData = await getDataFromBackend(true);
+    const someData2 = await resolveAfter2Seconds(false);
+    return someData + someData2;
+}
+					</code></pre>
+				</section>
+
+				<section>
+					Overloaded
+					<img class="stretch" data-src="content/overload.gif">
+				</section>
+
+				<section>
+
+					<section>
+						Simple example
+						<iframe class="stretch" data-src="http://localhost:4200/"></iframe>
+					</section>
+
+					<section>
+						<pre><code class="TypeScript" data-trim contenteditable>
+	todoSubject: Subject = new Subject();
+
+	pushToStream(todoListChanged){
+	    setTimeout(() => {
+	        this.todoSubject.next({
+	            editId: this.editObjectId,
+	            addItemActive: this.addItemActive,
+	            todoListChanged: todoListChanged,
+	            todoItems: this.listOftodos
+	        });
+	    }, 0);
+	}
+						</code></pre>
+					</section>
+
+					<section>
+						Simple example
+						<iframe class="stretch" data-src="http://localhost:4200/"></iframe>
+					</section>
+
+					<section>
+						TodoListComponent
+						<pre><code class="TypeScript" data-trim contenteditable>
+	this._todoService.getStream()
+	.filter(current => current.todoListChanged)
+	.map(current => {
+	    return current.todoItems;
+	})
+	.subscribe(next => {
+	    this.todoListLocal = next;
+	});
+						</code></pre>
+					</section>
+
+					<section>
+						Simple example
+						<iframe class="stretch" data-src="http://localhost:4200/"></iframe>
+					</section>
+				</section>
+
+				<section>
+					Creating a timer using observables that executes each second for 5 seconds
+					<pre class="fragment"><code class="TypeScript" data-trim contenteditable>
+let observable = Observable.interval(1000);
+
+let subscription = observable
+.take(5)
+.subscribe(x => {
+	console.log(x)
+});
+					</code></pre>
+				</section>
+
+				<section>
+					RxJS
+					<img class="stretch" data-src="content/wow.gif">
+				</section>
+
+
+
+
+				<section>
+					End, for now
+				</section>
+
+				<section>
+					Questions?
+					<img class="stretch" data-src="content/questions.gif">
+				</section>
+
+				<section>
+					This page is intentionally left blank
+				</section>
+
+				<section>
+					Slide 2
+					<h2>Pretty Code</h2>
+					<pre><code class="TypeScript" data-trim contenteditable>
+private pushToStream(){
+    setTimeout(() => {
+        this.todoSubject.next({
+            editId: this.editObjectId,
+            addItemActive: this.addItemActive,
+            todoItems: this.listOftodos
+        });
+    }, 0);
+}
+					</code></pre>
+				</section>
+				<section data-background-image="content/what.gif">
+
+				</section>
+				<section>
+					<img class="stretch" data-src="content/mine.gif">
+				</section>
+				<section>
+					<iframe class="stretch" data-src="http://localhost:4200/"></iframe>
+				</section>
+				<section>
+					<h3>Slide 3</h3>
+					<video data-autoplay src="http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"></video>
+				</section>
+			</div>
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+			// More info about config & dependencies:
+			// - https://github.com/hakimel/reveal.js#configuration
+			// - https://github.com/hakimel/reveal.js#dependencies
+			Reveal.initialize({
+				history: true,
+				dependencies: [
+					{ src: 'plugin/markdown/marked.js' },
+					{ src: 'plugin/markdown/markdown.js' },
+					{ src: 'plugin/notes/notes.js', async: true },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+				]
+			});
+		</script>
+	</body>
+</html>
