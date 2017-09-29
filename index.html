@@ -26,7 +26,7 @@
 			<div class="slides">
 				<section>
 					<h1>RxJS</h1>
-					ReactiveX
+					Reactive Extentions
 				</section>
 				<section>
 					<img class="stretch" data-src="content/whaaat.gif">
@@ -111,9 +111,7 @@ console.log(generator.next().value);
 							});
 						</code></pre>
 					</section>
-					<section>
 
-					</section>
 				</section>
 					<img class="fragment" class="stretch" data-src="content/broken.gif">
 				<section>
@@ -147,20 +145,81 @@ console.log(generator.next().value);
 
 
 				<section>
-					Observable
-					<pre><code class="TypeScript" data-trim contenteditable>
-var myObservable =  new Observable(observer => {
-    observer.next(42);
-    observer.next(100);
-    setTimeout(() => {
-        observer.next(200);
-    }, 1000);
-});
 
-myObservable.subscribe(next => {
-    console.log(next)
-});
-					</code></pre>
+					<section>
+						Observable
+						<pre><code class="TypeScript" data-trim contenteditable>
+	var myObservable =  new Observable(observer => {
+	    observer.next(42);
+	    observer.next(100);
+	    setTimeout(() => {
+	        observer.next(200);
+	    }, 1000);
+	});
+
+	myObservable.subscribe(next => {
+	    console.log(next)
+	});
+						</code></pre>
+					</section>
+					<section>
+						Promises vs Observable syntax
+
+						<pre><code class="TypeScript" data-trim contenteditable>
+promise.then(
+    successFunction
+    errorFunction
+)
+
+observable.subscribe(
+    nextFunction
+    errorFunction,
+    completeFunction
+)
+						</code></pre>
+					</section>
+
+					<section>
+						Multiple subscribes
+						<pre><code class="TypeScript" data-trim contenteditable>
+	var myObservable =  new Observable(observer => {
+		observer.next(42);
+		observer.next(100);
+		setTimeout(() => {
+			observer.next(200);
+		}, 1000);
+	});
+
+	myObservable.subscribe(next => {
+		console.log("S1:" + next)
+	});
+
+	myObservable.subscribe(next => {
+		console.log("S2:" + next)
+	});
+						</code></pre>
+					</section>
+
+					<section>
+						Multiple subscribes shared
+						<pre><code class="TypeScript" data-trim contenteditable>
+					var myObservable =  new Observable(observer => {
+					observer.next(42);
+					observer.next(100);
+					setTimeout(() => {
+					observer.next(200);
+					}, 1000);
+					}).share();
+
+					myObservable.subscribe(next => {
+					console.log("S1:" + next)
+					});
+
+					myObservable.subscribe(next => {
+					console.log("S2:" + next)
+					});
+						</code></pre>
+					</section>
 				</section>
 
 				<section>
@@ -235,7 +294,7 @@ const clicks = new Observable(observer => {
 					</section>
 
 					<section>
-						.map(function)
+						<a href="http://reactivex.io/documentation/operators/map.html">.map(function)</a>
 						<img class="stretch" data-src="content/operators/map.png">
 					</section>
 
@@ -265,6 +324,11 @@ const clicks = new Observable(observer => {
 						<img class="stretch" data-src="content/operators/retry.png">
 					</section>
 
+					<section>
+						.catch(return new Observer)
+						<img class="stretch" data-src="content/operators/catch.png">
+					</section>
+
 
 
 				</section>
@@ -281,10 +345,44 @@ async function getBackends() {
 					</code></pre>
 				</section>
 
-				<section>
+				<!-- <section>
 					Overloaded
 					<img class="stretch" data-src="content/overload.gif">
+				</section> -->
+
+
+				<section>
+					Creating a timer using observables that executes each second for 5 seconds
+					<pre class="fragment"><code class="TypeScript" data-trim contenteditable>
+let observable = Observable.interval(1000);
+
+let subscription = observable
+.take(5)
+.subscribe(x => {
+	console.log(x)
+});
+					</code></pre>
 				</section>
+
+				<section>
+					RxJS
+					<img class="stretch" data-src="content/wow.gif">
+				</section>
+
+
+
+
+				<section>
+					Jan Greger Hemb <br />
+					github.com/JGH153<br />
+					reactivex.io
+				</section>
+
+				<section>
+					Questions?
+					<img class="stretch" data-src="content/questions.gif">
+				</section>
+
 
 				<section>
 
@@ -336,38 +434,16 @@ async function getBackends() {
 				</section>
 
 				<section>
-					Creating a timer using observables that executes each second for 5 seconds
-					<pre class="fragment"><code class="TypeScript" data-trim contenteditable>
-let observable = Observable.interval(1000);
-
-let subscription = observable
-.take(5)
-.subscribe(x => {
-	console.log(x)
-});
-					</code></pre>
-				</section>
-
-				<section>
-					RxJS
-					<img class="stretch" data-src="content/wow.gif">
-				</section>
-
-
-
-
-				<section>
-					End, for now
-				</section>
-
-				<section>
-					Questions?
-					<img class="stretch" data-src="content/questions.gif">
-				</section>
-
-				<section>
 					This page is intentionally left blank
 				</section>
+
+
+
+
+
+
+
+
 
 				<section>
 					Slide 2
