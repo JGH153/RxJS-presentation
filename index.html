@@ -28,6 +28,11 @@
 					<h1>RxJS</h1>
 					Reactive Extentions
 				</section>
+
+				<section>
+					Focus is on RxJS, but is available for a lot of other languages including Java, .Net, C++ and swift
+				</section>
+
 				<section>
 					<img class="stretch" data-src="content/whaaat.gif">
 				</section>
@@ -35,6 +40,9 @@
 				<section>
 					<h2>Data flow</h2>
 					RxJS is a library for reactive programming using Observables, to make it easier to compose asynchronous or callback-based code
+					<h2 class="fragment">
+						Observable pattern
+					</h2>
 				</section>
 
 				<section>
@@ -234,6 +242,189 @@ observable.subscribe(
 				</section>
 
 
+				<section>
+					Streams and time axis<br />
+					<img class="stretch" data-src="content/stream.png">
+				</section>
+
+
+				<section>
+					<section>
+						Operators
+						<pre><code class="TypeScript" data-trim contenteditable>
+							myObservable/mySubject
+							.
+							.subscribe
+
+							.map()
+							.filter()
+							.skip()
+							.delay()
+							.throttleTime()
+							.debounceTime()
+							.retry()
+							.catch()
+						</code></pre>
+					</section>
+
+					<section>
+						<a href="http://reactivex.io/documentation/operators/map.html" target="_blank">.map(function)</a>
+						<img class="stretch" data-src="content/operators/map.png">
+					</section>
+
+					<section>
+						.filter(function)
+						<img class="stretch" data-src="content/operators/filter.png">
+					</section>
+
+					<section>
+						.skip(number)<br />
+						.take(number)
+						<img class="stretch" data-src="content/operators/skip.png">
+					</section>
+
+					<section>
+						.delay(ms)
+						<img class="stretch" data-src="content/operators/delay.png">
+					</section>
+
+					<section>
+						.throttleTime(ms)
+						<img class="stretch" data-src="content/operators/throttleTime.png">
+					</section>
+
+					<section>
+						.debounceTime(ms)
+						<img class="stretch" data-src="content/operators/debounce.png">
+					</section>
+
+					<section>
+						.retry(number)
+						<img class="stretch" data-src="content/operators/retry.png">
+					</section>
+
+					<section>
+						.catch(return new Observer)
+						<img class="stretch" data-src="content/operators/catch.png">
+					</section>
+
+
+
+				</section>
+
+
+				<section>
+					Async/await is NOT a part of this
+					<pre><code class="TypeScript" data-trim contenteditable>
+async function getData() {
+    return await getDataFromBackend();
+}
+					</code></pre>
+				</section>
+
+				<!-- <section>
+					Overloaded
+					<img class="stretch" data-src="content/overload.gif">
+				</section> -->
+
+
+				<section>
+					Creating a timer using observables that executes each second, for 5 seconds
+					<pre class="fragment"><code class="TypeScript" data-trim contenteditable>
+let observable = Observable.interval(1000);
+
+let subscription = observable
+.take(5)
+.subscribe(next => {
+    console.log(next)
+});
+					</code></pre>
+				</section>
+
+				<section>
+					Polling a backend service each 5 seconds
+					<pre class="fragment"><code class="TypeScript" data-trim contenteditable>
+const myObservable = new Observable(observer => {
+    Observable.interval(5000).subscribe(next => {
+        this._http.get("www.ulv.no").subscribe(value  => {
+            observer.next(value);
+        })
+    });
+});
+
+myObservable
+.subscribe(value => {
+    console.log(value);
+})
+					</code></pre>
+				</section>
+
+				<section>
+					Polling and unstable backend that crashes all the time
+					<pre class="fragment"><code class="TypeScript" data-trim contenteditable>
+Observable.interval(5000)
+.flatMap(() => {
+    return this._http.get("www.ulv.no")
+	.catch(error => Observable.empty())
+})
+.subscribe(data => {
+    console.log(data);
+})
+					</code></pre>
+				</section>
+
+				<section>
+					Only execute some code after no mouse movement for 1 second
+					<pre class="fragment"><code class="TypeScript" data-trim contenteditable>
+Observable.fromEvent(window, 'mousemove')
+.debounceTime(1000)
+.subscribe(next => {
+    console.log("No movment for one sec!")
+});
+					</code></pre>
+				</section>
+
+				<section>
+					<section>
+						Observable combine operators
+					</section>
+
+					<section>
+						Have a series of observables execute in sequence
+						<pre class="fragment"><code class="TypeScript" data-trim contenteditable>
+const allObservables = Observable.concat(
+    Observable.interval(300).take(1).map(next => "Timer 1"),
+    Observable.interval(400).take(1).map(next => "Timer 2"),
+    Observable.interval(200).take(1).map(next => "Timer 3"),
+).subscribe(next => {
+    console.log(next)
+})
+						</code></pre>
+					</section>
+
+					<section>
+						Have several observables race each other and only recive from the first to finish
+						<pre class="fragment"><code class="TypeScript" data-trim contenteditable>
+	const race = Observable.race(
+	    Observable.interval(700).map(next => "Timer 1"),
+	    this._http.get("www.ulv.no")
+	)
+	.take(1)
+	.subscribe(next => {
+	    console.log("Winner: " + next)
+	})
+						</code></pre>
+					</section>
+
+				</section>
+
+				<section>
+					Subject (Active observables)<br />
+					<span class="fragment">
+						Shared by default
+					</span>
+				</section>
+
 
 				<section>
 					Subject
@@ -277,96 +468,56 @@ const clicks = new Observable(observer => {
 				</section>
 
 				<section>
-					<section>
-						Operators
-						<pre><code class="TypeScript" data-trim contenteditable>
-							myObservable/mySubject
-							.
-							.subscribe
-
-							.map()
-							.filter()
-							.skip()
-							.delay()
-							.throttleTime()
-							.retry()
-						</code></pre>
-					</section>
-
-					<section>
-						<a href="http://reactivex.io/documentation/operators/map.html">.map(function)</a>
-						<img class="stretch" data-src="content/operators/map.png">
-					</section>
-
-					<section>
-						.filter(function)
-						<img class="stretch" data-src="content/operators/filter.png">
-					</section>
-
-					<section>
-						.skip(number)
-						.skipLast(number)
-						<img class="stretch" data-src="content/operators/skip.png">
-					</section>
-
-					<section>
-						.delay(ms)
-						<img class="stretch" data-src="content/operators/delay.png">
-					</section>
-
-					<section>
-						.throttleTime(ms)
-						<img class="stretch" data-src="content/operators/debounce.png">
-					</section>
-
-					<section>
-						.retry(number)
-						<img class="stretch" data-src="content/operators/retry.png">
-					</section>
-
-					<section>
-						.catch(return new Observer)
-						<img class="stretch" data-src="content/operators/catch.png">
-					</section>
-
-
-
-				</section>
-
-
-				<section>
-					Async/await is NOT a part of this
-					<pre><code class="TypeScript" data-trim contenteditable>
-async function getBackends() {
-    const someData = await getDataFromBackend(true);
-    const someData2 = await resolveAfter2Seconds(false);
-    return someData + someData2;
-}
-					</code></pre>
-				</section>
-
-				<!-- <section>
-					Overloaded
-					<img class="stretch" data-src="content/overload.gif">
-				</section> -->
-
-
-				<section>
-					Creating a timer using observables that executes each second for 5 seconds
+					Behavior Subject: Subject varables, with default value <br />
 					<pre class="fragment"><code class="TypeScript" data-trim contenteditable>
-let observable = Observable.interval(1000);
+username: BehaviorSubject = new BehaviorSubject("Greger");
 
-let subscription = observable
-.take(5)
-.subscribe(x => {
-	console.log(x)
+username.subscribe(next => {
+    console.log(next) //Greger
+})
+					</code></pre>
+
+				</section>
+
+				<section>
+
+					Replay Subject: Replay previous data on subscribe
+
+					<pre class="fragment"><code class="TypeScript" data-trim contenteditable>
+let replaySubject = new ReplaySubject(2); //2 = buffer size
+
+replaySubject.next("1");
+replaySubject.next("2");
+replaySubject.next("3");
+
+replaySubject.subscribe(next => {
+	console.log(next) //2, 3
 });
 					</code></pre>
+
 				</section>
+
+
+				<section>
+					Remember to unsubscribe, espessially in a Single Page Application
+					<pre><code class="TypeScript" data-trim contenteditable>
+						let subscription = observable.subscribe(......)
+
+						//Some time later, for example on component destoy/unmount
+
+						subscription.unsubscribe()
+					</code></pre>
+				</section>
+
+
 
 				<section>
 					RxJS
 					<img class="stretch" data-src="content/wow.gif">
+				</section>
+
+				<section>
+					Do not overuse RxJS
 				</section>
 
 
@@ -374,8 +525,9 @@ let subscription = observable
 
 				<section>
 					Jan Greger Hemb <br />
-					github.com/JGH153<br />
-					reactivex.io
+					www.github.com/JGH153<br />
+					<a href="http://reactivex.io/" target="_blank">reactivex.io</a><br />
+					<a href="http://reactivex.io/rxjs/" target="_blank">reactivex.io/rxjs</a>
 				</section>
 
 				<section>
