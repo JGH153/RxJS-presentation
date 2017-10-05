@@ -400,7 +400,7 @@ let subscription = observable
 					</code></pre>
 				</section>
 
-				<section>
+				<!-- <section>
 					Polling a backend service each 5 seconds
 					<pre class="fragment"><code class="TypeScript" data-trim contenteditable>
 const myObservable = new Observable(observer => {
@@ -416,7 +416,7 @@ myObservable
     console.log(value);
 })
 					</code></pre>
-				</section>
+				</section> -->
 
 				<section>
 					Polling an unstable backend that crashes all the time
@@ -470,7 +470,7 @@ mySubject.subscribe(next => {
 });
 
 mySubject.next(42);
-mySubject.next(200);
+
 setTimeout(() => {
     mySubject.next(500);
 }, 1000);
@@ -487,7 +487,7 @@ setTimeout(() => {
 						Easy to use it wrong
 						<img class="stretch" data-src="content/wrong.gif">
 					</section>
-					<section>
+					<!-- <section>
 						Incorrect
 						<pre><code class="TypeScript" data-trim contenteditable>
 const subject = new Subject();
@@ -502,7 +502,7 @@ const clicks = new Observable(observer => {
 });
 						</code></pre>
 
-					</section>
+					</section> -->
 
 				</section>
 
