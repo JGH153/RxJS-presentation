@@ -202,40 +202,40 @@ myObservable.subscribe(....) // Observer
 					<section>
 						Multiple subscribes
 						<pre><code class="TypeScript" data-trim contenteditable>
-	var myObservable =  new Observable(observer => {
-		observer.next(42);
-		setTimeout(() => {
-			observer.next(200);
-		}, 1000);
-	});
+var myObservable =  new Observable(observer => {
+	observer.next(42);
+	setTimeout(() => {
+		observer.next(200);
+	}, 1000);
+});
 
-	myObservable.subscribe(next => {
-		console.log("S1:" + next)
-	});
+myObservable.subscribe(next => {
+    console.log("S1:" + next)
+});
 
-	myObservable.subscribe(next => {
-		console.log("S2:" + next)
-	});
+myObservable.subscribe(next => {
+    console.log("S2:" + next)
+});
 						</code></pre>
 					</section>
 
 					<section>
 						Multiple subscribes shared
 						<pre><code class="TypeScript" data-trim contenteditable>
-					var myObservable =  new Observable(observer => {
-						observer.next(42);
-						setTimeout(() => {
-							observer.next(200);
-						}, 1000);
-					}).share();
+var myObservable =  new Observable(observer => {
+	observer.next(42);
+	setTimeout(() => {
+		observer.next(200);
+	}, 1000);
+}).share();
 
-					myObservable.subscribe(next => {
-					console.log("S1:" + next)
-					});
+myObservable.subscribe(next => {
+    console.log("S1:" + next)
+});
 
-					myObservable.subscribe(next => {
-					console.log("S2:" + next) //42 is never received
-					});
+myObservable.subscribe(next => {
+    console.log("S2:" + next) //42 is never received
+});
 						</code></pre>
 					</section>
 
