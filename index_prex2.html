@@ -1,0 +1,693 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>RxJS</title>
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/black.css">
+
+		<!-- Theme used for syntax highlighting of code -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<section>
+					<h2>Reactive Extentions</h2>
+					RxJS
+				</section>
+
+				<section>
+					Focus is on RxJS, but is available for a lot of other languages including Java, .Net, C++ and swift
+				</section>
+
+				<section>
+					<img class="stretch" data-src="content/whaaat.gif">
+				</section>
+
+				<section>
+					<h2>Data flow</h2>
+					RxJS is a library for reactive programming using Observables, to make it easier to compose asynchronous or callback-based code
+					<br /><br />
+					<h2 class="fragment">
+						Observable pattern
+					</h2>
+				</section>
+
+				<!-- <section>
+					<table>
+				    	<thead>
+							<tr>
+					            <th></th>
+					            <th>Single</th>
+					            <th>Multiple</th>
+					        </tr>
+						</thead>
+				        <tbody>
+							<tr>
+					            <td>Pull</td>
+					            <td>Function</td>
+					            <td>Iterator</td>
+					        </tr>
+					        <tr>
+					            <td>Push</td>
+					            <td>Promise</td>
+					            <td></td>
+					        </tr>
+						</tbody>
+			    	</table>
+				</section> -->
+
+				<section>
+					<h1>Pull</h1>
+				</section>
+
+				<section>
+					Function
+					<pre><code class="TypeScript" data-trim contenteditable>
+						function myFunction(someVal){
+						    return someVal*2
+						}
+						myFunction(5) // 10
+					</code></pre>
+				</section>
+
+				<section>
+					Iterators and generators
+					<pre><code class="TypeScript" data-trim contenteditable>
+function* myFunction() {
+    yield 5;
+    yield 10;
+    yield 15;
+}
+
+var generator = myFunction();
+
+console.log(generator.next().value);
+console.log(generator.next().value);
+console.log(generator.next().value);
+					</code></pre>
+				</section>
+
+				<section>
+					<h1>Push</h1>
+				</section>
+
+				<section>
+					<section>
+						Promise
+						<pre><code class="TypeScript" data-trim contenteditable>
+							let willIGetNewPhone = new Promise((resolve, reject) => {
+							    setTimeout(() => {
+							        resolve(true)
+							    }, 1000)
+							});
+
+							willIGetNewPhone.then(value => {
+							    console.log("Got a new phone!") //prints after 1 sec
+							});
+						</code></pre>
+					</section>
+
+				</section>
+					<img class="fragment" class="stretch" data-src="content/broken.gif">
+				<section>
+					<table>
+				    	<thead>
+							<tr>
+					            <th></th>
+					            <th>Single</th>
+					            <th>Multiple</th>
+					        </tr>
+						</thead>
+				        <tbody>
+							<tr>
+					            <td>Pull</td>
+					            <td>Function</td>
+					            <td>Iterator</td>
+					        </tr>
+					        <tr>
+					            <td>Push</td>
+					            <td>Promise</td>
+					            <td class="fragment">Observable</td>
+					        </tr>
+						</tbody>
+			    	</table>
+				</section>
+
+				<section>
+					Now entering RxJS<br />
+					<img class="fragment" class="stretch" data-src="content/rxjs.gif">
+				</section>
+
+
+				<section>
+
+					<section>
+						Observable
+						<pre><code class="TypeScript" data-trim contenteditable>
+	var myObservable =  new Observable(observer => {
+	    observer.next(42);  //"return" a value instantly
+	    setTimeout(() => {
+	        observer.next(200); // "return" a value asynchronously
+	    }, 1000);
+	});
+
+	myObservable.subscribe(next => {
+	    console.log(next)
+	});
+						</code></pre>
+					</section>
+					<section>
+						Promises vs Observable syntax
+
+						<pre><code class="TypeScript" data-trim contenteditable>
+promise.then(
+    successFunction
+    errorFunction
+)
+
+observable.subscribe(
+    nextFunction
+    errorFunction,
+    completeFunction
+)
+						</code></pre>
+					</section>
+
+					<section>
+						Observable and observers<br />
+						Observers subscribe to observables
+
+						<pre><code class="TypeScript" data-trim contenteditable>
+let myObservable = new Observable(.....) //observable
+myObservable.subscribe(....) // Observer
+myObservable.subscribe(....) // Observer
+myObservable.subscribe(....) // Observer
+						</code></pre>
+					</section>
+
+					<section>
+						Multiple subscribes
+						<pre><code class="TypeScript" data-trim contenteditable>
+var myObservable =  new Observable(observer => {
+	observer.next(42);
+	setTimeout(() => {
+		observer.next(200);
+	}, 1000);
+});
+
+myObservable.subscribe(next => {
+    console.log("S1:" + next)
+});
+
+myObservable.subscribe(next => {
+    console.log("S2:" + next)
+});
+						</code></pre>
+					</section>
+
+					<section>
+						Multiple subscribes shared
+						<pre><code class="TypeScript" data-trim contenteditable>
+var myObservable =  new Observable(observer => {
+	observer.next(42);
+	setTimeout(() => {
+		observer.next(200);
+	}, 1000);
+}).share();
+
+myObservable.subscribe(next => {
+    console.log("S1:" + next)
+});
+
+myObservable.subscribe(next => {
+    console.log("S2:" + next) //42 is never received
+});
+						</code></pre>
+					</section>
+
+				</section>
+
+				<section>
+					<!-- "hot" vs "cold" observables<br /><br /> -->
+					.subscribe() and unSubscribe()
+					<pre><code class="TypeScript" data-trim contenteditable>
+						observable.subscribe(nextHandler, errorHandler, completionHandler)
+
+						let subscription = observable.subscribe(......)
+						subscription.unsubscribe()
+					</code></pre>
+				</section>
+
+				<section>
+					<section>
+						Creating Observables
+					</section>
+					<section>
+						.of(.....)
+						<pre><code class="TypeScript" data-trim contenteditable>
+let myObservable = Observable.of(1, 2, 3);
+myObservable.subscribe(next => {
+    console.log(next) //1, 2, 3
+})
+						</code></pre>
+					</section>
+					<section>
+						.fromEvent(element, evenet)
+						<pre><code class="TypeScript" data-trim contenteditable>
+Observable.fromEvent(window, 'mousemove')
+.subscribe(next => {
+    console.log("Mouse movement")
+});
+						</code></pre>
+					</section>
+					<section>
+						.interval(time_ms)
+						<pre><code class="TypeScript" data-trim contenteditable>
+let myObservable = Observable.interval(300);
+myObservable.subscribe(next => {
+    console.log(next) //0, 1, 2, 3....
+})
+						</code></pre>
+					</section>
+					<section>
+						Creating your own
+						<pre><code class="TypeScript" data-trim contenteditable>
+const myObservable = new Observable(observer => {
+    let counter = 0;
+    let interval = setInterval(() => {
+        observer.next( counter++ );
+    }, 300);
+    return () => { clearInterval(interval) }
+});
+myObservable.subscribe(next => {
+    console.log(next) // 0, 1, 2, 3.....
+})
+						</code></pre>
+					</section>
+				</section>
+
+
+				<section>
+					Streams and time axis<br />
+					<img class="stretch" data-src="content/stream.png">
+				</section>
+
+
+				<section>
+					<section>
+						Operators
+						<pre><code class="TypeScript" data-trim contenteditable>
+							myObservable/mySubject
+							.
+							.subscribe
+
+							.map()
+							.filter()
+							.skip()
+							.delay()
+							.throttleTime()
+							.debounceTime()
+							.switchMap()
+							.retry()
+							.catch()
+						</code></pre>
+					</section>
+
+					<section>
+						<a href="http://reactivex.io/documentation/operators/map.html" target="_blank">.map(function)</a>
+						<img class="stretch" data-src="content/operators/map.png">
+					</section>
+
+					<section>
+						.filter(function)
+						<img class="stretch" data-src="content/operators/filter.png">
+					</section>
+
+					<section>
+						.skip(number)<br />
+						.take(number)
+						<img class="stretch" data-src="content/operators/skip.png">
+					</section>
+
+					<section>
+						.delay(ms)
+						<img class="stretch" data-src="content/operators/delay.png">
+					</section>
+
+					<section>
+						.throttleTime(ms)
+						<img class="stretch" data-src="content/operators/throttleTime.png">
+					</section>
+
+					<section>
+						.debounceTime(ms)
+						<img class="stretch" data-src="content/operators/debounce.png">
+					</section>
+
+					<section>
+						.switchMap(function => { return Observable to switch })
+						<img class="stretch" data-src="content/operators/switchmap.png">
+					</section>
+
+					<section>
+						Error Handling
+					</section>
+
+					<section>
+						.retry(number)
+						<img class="stretch" data-src="content/operators/retry.png">
+					</section>
+
+					<section>
+						.catch(return new Observer)
+						<img class="stretch" data-src="content/operators/catch.png">
+					</section>
+
+
+
+				</section>
+
+
+				<!-- <section>
+					Overloaded
+					<img class="stretch" data-src="content/overload.gif">
+				</section> -->
+
+				<section>
+					Creating a timer using observables that executes each second, for 5 seconds
+					<pre class="fragment"><code class="TypeScript" data-trim contenteditable>
+let observable = Observable.interval(1000);
+
+let subscription = observable
+.take(5)
+.subscribe(next => {
+    console.log(next)
+});
+					</code></pre>
+				</section>
+
+				<!-- <section>
+					Polling a backend service each 5 seconds
+					<pre class="fragment"><code class="TypeScript" data-trim contenteditable>
+const myObservable = new Observable(observer => {
+    Observable.interval(5000).subscribe(next => {
+        this._http.get("www.ulv.no").subscribe(value  => {
+            observer.next(value);
+        })
+    });
+});
+
+myObservable
+.subscribe(value => {
+    console.log(value);
+})
+					</code></pre>
+				</section> -->
+
+				<section>
+					Polling an unstable backend that crashes all the time
+					<pre class="fragment"><code class="TypeScript" data-trim contenteditable>
+Observable.interval(5000)
+.switchMap(() => {
+    return this._http.get("www.ulv.no")
+	.catch(error => Observable.empty())
+})
+.subscribe(data => {
+    console.log(data);
+})
+					</code></pre>
+				</section>
+
+				<section>
+					Only execute some code after no mouse movement for 1 second
+					<pre class="fragment"><code class="TypeScript" data-trim contenteditable>
+Observable.fromEvent(window, 'mousemove')
+.debounceTime(1000)
+.subscribe(next => {
+    console.log("No movment for one sec!")
+});
+					</code></pre>
+				</section>
+
+				<section>
+					Subject (Active observables)<br />
+					<span class="fragment">
+						Shared by default
+					</span>
+				</section>
+
+				<section>
+					Observable with next inside
+					<pre><code class="TypeScript" data-trim contenteditable>
+var myObservable =  new Observable(observer => {
+    observer.next(42);
+});
+					</code></pre>
+				</section>
+
+
+				<section>
+					Subject
+					<pre><code class="TypeScript" data-trim contenteditable>
+let mySubject = new Subject();
+
+mySubject.subscribe(next => {
+    console.log(next)
+});
+
+mySubject.next(42);
+
+setTimeout(() => {
+    mySubject.next(500);
+}, 1000);
+					</code></pre>
+
+					<p class="fragment">
+						Works really similar to EventEmitter
+					</p>
+
+				</section>
+
+				<section>
+					Skipping rest on Subjects and subtypes like Behaviour Subject
+				</section>
+
+				<section>
+					<section>
+						RxJS 5.6
+					</section>
+					<section>
+						No functional changes except pipe
+					</section>
+					<section>
+						Can Use of() directly
+						<pre><code class="TypeScript" data-trim contenteditable>
+							Import { of } from 'rxjs'
+							of(&#128527;, &#128522;, &#128523;)
+						</code></pre>
+					</section>
+					<section>
+						Can start to pipe
+						<pre class="fragment"><code class="TypeScript" data-trim contenteditable>
+							of(&#128527;, &#128522;, &#128523;)
+							.map(.....)
+						</code></pre>
+						<pre class="fragment"><code class="TypeScript" data-trim contenteditable>
+							of(&#128527;, &#128522;, &#128523;)
+							.pipe(
+								.map(.....)
+							)
+						</code></pre>
+					</section>
+					<section>
+						Why piping?
+						<p class="fragment">
+							Having global operators is bad
+						</p>
+						<p class="fragment">
+							Can treeshake
+						</p>
+						<p class="fragment">
+							Linters can be more helpfull
+						</p>
+						<p class="fragment">
+							Can easily create custom operators
+						</p>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						&#127881; RxJS 6.0 &#127881;
+					</section>
+					<section>
+						Smaller, faster, and easier to use
+					</section>
+					<section>
+						Simplified imports
+						<pre class="fragment"><code class="TypeScript" data-trim contenteditable>
+							import 'rxjs/add/operator/map';
+							import 'rxjs/add/observable/of';	
+						</code></pre>
+						<pre class="fragment"><code class="TypeScript" data-trim contenteditable>
+							import { map, filter } from 'rxjs/operators';
+							import { of } from 'rxjs';
+						</code></pre>
+					</section>
+					<section>
+						Hundreds of import sites reduced to 'rxjs' and 'rxjs/operators'
+						<p class="fragment">
+							And a 3 more thats rarly used
+						</p>
+						<p class="fragment">
+							Like: rxjs/testing, rxjs/webSocet and rxjs/ajax
+						</p>
+					</section>
+					<section>
+						Will make rxjs easier to learn, use and run
+					</section>
+					<section>
+						New operator!
+						<pre class="fragment"><code class="TypeScript" data-trim contenteditable>
+							.throwIfEmpty(
+								() => new Error('no data passed this operator')
+							)
+						</code></pre>
+					</section>
+					<section>
+						Renamed Operators
+						<p class="fragment">
+							catch() => catchError()
+						</p>
+						<p class="fragment">
+							do() => tap()
+						</p>
+						<p class="fragment">
+							finally() => finalize()
+						</p>
+						<p class="fragment">
+							switch() => switchAll()
+						</p>
+					</section>
+					
+					<section>
+						Renamed Observable-creation methods
+						<p class="fragment">
+							throw() => throwError()
+						</p>
+						<p class="fragment">
+							fromPromise() => from()
+						</p>
+					</section>
+					<section>
+						Deprications!
+					</section>
+					<section>
+						Operator version of combineLatest, merge, zip and a few similar combiners
+						<p class="fragment">
+							Use them staticly now like combineLatest(stream1, stream2) 
+						</p>
+					</section>
+					<section>
+						Arrrghh! Breaking changes!
+					</section>
+					<section>
+						Use rx-jscompat and tslint fixer
+						<pre class="pragment"><code class="TypeScript" data-trim contenteditable>
+							npm install -g rxjs-tslint
+							rxjs-5-to-6-migrate -p src/tsconfig.app.json
+						</code></pre> 
+					</section>
+					<section>
+						https://www.academind.com/learn/javascript/rxjs-6-what-changed/<br>
+						<iframe style="width: 700px; height: 650px;" src="https://www.academind.com/learn/javascript/rxjs-6-what-changed"></iframe>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						&#128552; RxJS 7.0 &#128552;
+					</section>
+					<section>
+						In development
+					</section>
+					<section>
+						Close to no changes, except blazing fast and insanely tiny
+					</section>
+					<section>
+						Deprications from 6 will be removed
+					</section>
+				</section>
+
+				<section>
+					<h2>
+						Reactive Extentions
+					</h2>
+					RxJS<br />
+					<p class="fragment">
+						<img class="stretch" data-src="content/wow.gif">
+					</p>
+				</section>
+
+				<!-- <section>
+					<section>
+						<h2>Do not overuse RxJS</h2>
+					</section>
+					<section>
+						Only where it providesas a benefit, and for the most part limited to async code execution
+					</section>
+
+				</section> -->
+
+				<section>
+					Jan Greger Hemb <br />
+					www.github.com/JGH153<br />
+					<a href="http://reactivex.io/" target="_blank">reactivex.io</a><br />
+					<a href="http://reactivex.io/rxjs/" target="_blank">reactivex.io/rxjs</a>
+				</section>
+
+				<section>
+					Questions?
+					<img class="stretch" data-src="content/questions.gif">
+				</section>
+
+				<section>
+					This page is intentionally left blank
+				</section>
+
+			</div>
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+			// More info about config & dependencies:
+			// - https://github.com/hakimel/reveal.js#configuration
+			// - https://github.com/hakimel/reveal.js#dependencies
+			Reveal.initialize({
+				history: true,
+				dependencies: [
+					{ src: 'plugin/markdown/marked.js' },
+					{ src: 'plugin/markdown/markdown.js' },
+					{ src: 'plugin/notes/notes.js', async: true },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+				]
+			});
+		</script>
+	</body>
+</html>
