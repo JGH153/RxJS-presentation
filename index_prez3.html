@@ -1,0 +1,797 @@
+<!doctype html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+	<title>RxJS</title>
+
+	<link rel="stylesheet" href="css/reveal.css">
+	<link rel="stylesheet" href="css/theme/black.css">
+
+	<!-- Theme used for syntax highlighting of code -->
+	<link rel="stylesheet" href="lib/css/zenburn.css">
+
+	<!-- Printing and PDF exports -->
+	<script>
+		var link = document.createElement('link');
+		link.rel = 'stylesheet';
+		link.type = 'text/css';
+		link.href = window.location.search.match(/print-pdf/gi) ? 'css/print/pdf.css' : 'css/print/paper.css';
+		document.getElementsByTagName('head')[0].appendChild(link);
+	</script>
+</head>
+
+<body>
+	<div class="reveal">
+		<div class="slides">
+			<section>
+				<h2>Reactive Extentions</h2>
+				RxJS
+			</section>
+
+			<section>
+				<img class="stretch" data-src="content/whaaat.gif">
+			</section>
+
+			<section>
+				<h3>RxJS in a nutshell</h3>
+				<ui>
+					<li class="fragment">THE library for event driven programming</li>
+					<li class="fragment">The best way to work with async data</li>
+					<li class="fragment">Observer pattern</li>
+					<li class="fragment">A function is executed each time new data arrives</li>
+					<li class="fragment">Can manipulate data before it arrives, functionally</li>
+					<li class="fragment">Better control over async data flow</li>
+					<li class="fragment">Think of RxJS as Lodash for events</li>
+				</ui>
+			</section>
+
+			<section>
+				<h2>Getting data...</h2>
+			</section>
+
+			<section>
+				<h1>Pull</h1>
+			</section>
+
+			<section>
+				Function
+				<pre><code class="TypeScript" data-trim contenteditable>
+						function myFunction(someVal){
+						    return someVal * 2
+						}
+						myFunction(5) // 10
+					</code></pre>
+			</section>
+
+			<section>
+				Iterators and generators
+				<pre><code class="TypeScript" data-trim contenteditable>
+function* myFunction() {
+    yield 5;
+    yield 10;
+    yield 15;
+}
+
+var generator = myFunction();
+
+console.log(generator.next().value); // 5
+console.log(generator.next().value); // 10
+console.log(generator.next().value); // 15
+					</code></pre>
+			</section>
+
+			<section>
+				<h1>Push</h1>
+			</section>
+
+			<section>
+				<section>
+					Promise
+					<pre><code class="TypeScript" data-trim contenteditable>
+							let willIGetNewPhone = new Promise((resolve, reject) => {
+							    setTimeout(() => {
+							        resolve(true)
+							    }, 1000)
+							});
+
+							willIGetNewPhone.then(value => {
+							    console.log("Got a new phone!") //prints after 1 sec
+							});
+						</code></pre>
+				</section>
+
+			</section>
+			<img class="fragment" class="stretch" data-src="content/broken.gif">
+			<section>
+				<table>
+					<thead>
+						<tr>
+							<th></th>
+							<th>Single</th>
+							<th>Multiple</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>Pull</td>
+							<td>Function</td>
+							<td>Iterator</td>
+						</tr>
+						<tr>
+							<td>Push</td>
+							<td>Promise</td>
+							<td class="fragment">Observable</td>
+						</tr>
+					</tbody>
+				</table>
+			</section>
+
+			<section>
+				Now entering RxJS<br />
+				<img class="fragment" class="stretch" data-src="content/rxjs.gif">
+			</section>
+
+
+			<section>
+
+				<section>
+					Observable
+					<pre><code class="TypeScript" data-trim contenteditable>
+	of(42, 200).subscribe(next => {
+		console.log(next); 
+		// 42
+		// 200
+	});
+						</code></pre>
+				</section>
+
+				<section>
+					Observable
+					<pre><code class="TypeScript" data-trim contenteditable>
+	var myObservable =  new Observable(observer => {
+	    observer.next(42);  // "return" a value instantly
+	    setTimeout(() => {
+	        observer.next(200); // "return" a value asynchronously
+	    }, 1000);
+	});
+
+	myObservable.subscribe(next => {
+		console.log(next) 
+		// 42, 
+		// 200 (after 1000ms)
+	});
+						</code></pre>
+				</section>
+				<section>
+					Promises vs Observable syntax
+
+					<pre><code class="TypeScript" data-trim contenteditable>
+promise.then(
+    successFunction
+    errorFunction
+)
+
+observable.subscribe(
+    nextFunction
+    errorFunction,
+    completeFunction
+)
+						</code></pre>
+				</section>
+
+				<section>
+					Observable and observers<br />
+					Observers subscribe to observables
+
+					<pre><code class="TypeScript" data-trim contenteditable>
+let myObservable = new Observable(.....) //observable
+myObservable.subscribe(....) // Observer
+myObservable.subscribe(....) // Observer
+myObservable.subscribe(....) // Observer
+						</code></pre>
+				</section>
+
+				<section>
+					Multiple subscribes
+					<pre><code class="TypeScript" data-trim contenteditable>
+var myObservable =  new Observable(observer => {
+	observer.next(42);
+	setTimeout(() => {
+		observer.next(200);
+	}, 1000);
+});
+
+myObservable.subscribe(next => {
+    console.log("S1:" + next)
+});
+
+myObservable.subscribe(next => {
+    console.log("S2:" + next)
+});
+						</code></pre>
+				</section>
+
+				<section>
+					Multiple subscribes shared
+					<pre><code class="TypeScript" data-trim contenteditable>
+var myObservable =  new Observable(observer => {
+	observer.next(42);
+	setTimeout(() => {
+		observer.next(200);
+	}, 1000);
+}).share();
+
+myObservable.subscribe(next => {
+    console.log("S1:" + next)
+});
+
+myObservable.subscribe(next => {
+    console.log("S2:" + next) //42 is never received
+});
+						</code></pre>
+				</section>
+
+			</section>
+
+			<section>
+				<!-- "hot" vs "cold" observables<br /><br /> -->
+				.subscribe() and unSubscribe()
+				<pre><code class="TypeScript" data-trim contenteditable>
+						observable.subscribe(nextHandler, errorHandler, completionHandler)
+
+						let subscription = observable.subscribe(......)
+						subscription.unsubscribe()
+					</code></pre>
+			</section>
+
+			<section>
+				<section>
+					Creating Observables
+				</section>
+				<section>
+					.of(.....)
+					<pre><code class="TypeScript" data-trim contenteditable>
+let myObservable = Observable.of(1, 2, 3);
+myObservable.subscribe(next => {
+    console.log(next) //1, 2, 3
+})
+						</code></pre>
+				</section>
+				<section>
+					.fromEvent(element, evenet)
+					<pre><code class="TypeScript" data-trim contenteditable>
+Observable.fromEvent(window, 'mousemove')
+.subscribe(next => {
+    console.log("Mouse movement")
+});
+						</code></pre>
+				</section>
+				<section>
+					.interval(time_ms)
+					<pre><code class="TypeScript" data-trim contenteditable>
+let myObservable = Observable.interval(300);
+myObservable.subscribe(next => {
+    console.log(next) //0, 1, 2, 3....
+})
+						</code></pre>
+				</section>
+				<section>
+					Creating your own
+					<pre><code class="TypeScript" data-trim contenteditable>
+const myObservable = new Observable(observer => {
+    let counter = 0;
+    let interval = setInterval(() => {
+        observer.next( counter++ );
+    }, 300);
+    return () => { clearInterval(interval) }
+});
+myObservable.subscribe(next => {
+    console.log(next) // 0, 1, 2, 3.....
+})
+						</code></pre>
+				</section>
+			</section>
+
+
+			<section>
+				Streams and time axis<br />
+				<img class="stretch" data-src="content/stream.png">
+			</section>
+
+
+			<section>
+				<section>
+					Operators
+					<pre><code class="TypeScript" data-trim contenteditable>
+							myObservable/mySubject
+							.
+							.subscribe
+
+							.map()
+							.filter()
+							.skip()
+							.delay()
+							.throttleTime()
+							.debounceTime()
+							.switchMap()
+							.retry()
+							.catch()
+						</code></pre>
+				</section>
+
+				<section>
+					<a href="http://reactivex.io/documentation/operators/map.html" target="_blank">.map(function)</a>
+					<img class="stretch" data-src="content/operators/map.png">
+				</section>
+
+				<section>
+					.filter(function)
+					<img class="stretch" data-src="content/operators/filter.png">
+				</section>
+
+				<section>
+					.skip(number)<br />
+					.take(number)
+					<img class="stretch" data-src="content/operators/skip.png">
+				</section>
+
+				<section>
+					.delay(ms)
+					<img class="stretch" data-src="content/operators/delay.png">
+				</section>
+
+				<section>
+					.throttleTime(ms)
+					<img class="stretch" data-src="content/operators/throttleTime.png">
+				</section>
+
+				<section>
+					.debounceTime(ms)
+					<img class="stretch" data-src="content/operators/debounce.png">
+				</section>
+
+				<section>
+					.switchMap(function => { return Observable to switch })
+					<img class="stretch" data-src="content/operators/switchmap.png">
+				</section>
+
+				<section>
+					Error Handling
+				</section>
+
+				<section>
+					.retry(number)
+					<img class="stretch" data-src="content/operators/retry.png">
+				</section>
+
+				<section>
+					.catch(return new Observer)
+					<img class="stretch" data-src="content/operators/catch.png">
+				</section>
+
+
+
+			</section>
+
+
+			<!-- <section>
+					Overloaded
+					<img class="stretch" data-src="content/overload.gif">
+				</section> -->
+
+			<section>
+				Creating a timer using observables that executes each second, for 5 seconds
+				<pre class="fragment"><code class="TypeScript" data-trim contenteditable>
+let observable = Observable.interval(1000);
+
+let subscription = observable
+.take(5)
+.subscribe(next => {
+    console.log(next)
+});
+					</code></pre>
+			</section>
+
+			<!-- <section>
+					Polling a backend service each 5 seconds
+					<pre class="fragment"><code class="TypeScript" data-trim contenteditable>
+const myObservable = new Observable(observer => {
+    Observable.interval(5000).subscribe(next => {
+        this._http.get("www.ulv.no").subscribe(value  => {
+            observer.next(value);
+        })
+    });
+});
+
+myObservable
+.subscribe(value => {
+    console.log(value);
+})
+					</code></pre>
+				</section> -->
+
+			<section>
+				Polling an unstable backend that crashes all the time
+				<pre class="fragment"><code class="TypeScript" data-trim contenteditable>
+Observable.interval(5000)
+.switchMap(() => {
+    return this._http.get("www.ulv.no")
+	.catch(error => Observable.empty())
+})
+.subscribe(data => {
+    console.log(data);
+})
+					</code></pre>
+			</section>
+
+			<section>
+				Only execute some code after no mouse movement for 1 second
+				<pre class="fragment"><code class="TypeScript" data-trim contenteditable>
+Observable.fromEvent(window, 'mousemove')
+.debounceTime(1000)
+.subscribe(next => {
+    console.log("No movment for one sec!")
+});
+					</code></pre>
+			</section>
+
+			<section>
+				Subject (Active observables)<br />
+				<span class="fragment">
+					Shared by default
+				</span>
+			</section>
+
+			<section>
+				Observable with next inside
+				<pre><code class="TypeScript" data-trim contenteditable>
+var myObservable =  new Observable(observer => {
+    observer.next(42);
+});
+					</code></pre>
+			</section>
+
+
+			<section>
+				Subject
+				<pre><code class="TypeScript" data-trim contenteditable>
+let mySubject = new Subject();
+
+mySubject.subscribe(next => {
+    console.log(next)
+});
+
+mySubject.next(42);
+
+setTimeout(() => {
+    mySubject.next(500);
+}, 1000);
+					</code></pre>
+
+				<p class="fragment">
+					Works really similar to EventEmitter
+				</p>
+
+			</section>
+
+			<section>
+				<section>
+					Easy to use it wrong
+					<img class="stretch" data-src="content/wrong.gif">
+				</section>
+				<!-- <section>
+						Incorrect
+						<pre><code class="TypeScript" data-trim contenteditable>
+const subject = new Subject();
+button.addEventListener(‘click’, () => subject.next('click');
+subject.subscribe(x => console.log(x));
+						</code></pre>
+						<br />
+						<span class="fragment">Correct</span>
+						<pre class="fragment"><code class="TypeScript" data-trim contenteditable>
+const clicks = new Observable(observer => {
+    button.addEventListener('click', evt => observer.next(evt));
+});
+						</code></pre>
+
+					</section> -->
+
+			</section>
+
+			<section>
+				Behavior Subject: Subject variables, with default value <br />
+				<pre class="fragment"><code class="TypeScript" data-trim contenteditable>
+username: BehaviorSubject = new BehaviorSubject("Greger");
+
+username.subscribe(next => {
+    console.log(next) //Greger
+})
+					</code></pre>
+
+			</section>
+
+			<section>
+
+				Replay Subject: Replay previous data on subscribe
+
+				<pre class="fragment"><code class="TypeScript" data-trim contenteditable>
+let replaySubject = new ReplaySubject(2); //2 = buffer size
+
+replaySubject.next("1");
+replaySubject.next("2");
+replaySubject.next("3");
+
+replaySubject.subscribe(next => {
+	console.log(next) //2, 3
+});
+					</code></pre>
+
+				<pre class="fragment"><code class="TypeScript" data-trim contenteditable>
+let replaySubject = new ReplaySubject(2, 500);
+//2 = buffer size, 500 = time window
+					</code></pre>
+			</section>
+
+			<section>
+				<h3>When to use a subject over observales?</h3>
+				<p class="fragment">
+					When you need a shared observable that can push/next() values from outside the observable
+				</p>
+				<p class="fragment">
+					When need behavior of replay or behavior subject
+				</p>
+			</section>
+
+			<!-- <section>
+
+					Async Subject: Only send last data pushed to stream/next on complete
+
+					<pre class="fragment"><code class="TypeScript" data-trim contenteditable>
+let asyncSubject = new AsyncSubject();
+asyncSubject.subscribe(
+    next =>  {console.log(next)}, //2
+    error => {console.log("error")},
+    () =>    {console.log("complete")}
+);
+
+asyncSubject.next("1");
+asyncSubject.next("2");
+asyncSubject.complete();
+					</code></pre>
+
+				</section> -->
+
+			<section>
+				<section>
+					Subject examples
+				</section>
+				<section>
+					A service that can receive data and next it to a subject stream
+					<pre class="fragment"><code class="TypeScript" data-trim contenteditable>
+todoSubject: Subject = new Subject();
+
+addItem(newItem){
+    this.listOftodos.push(newItem);
+    this.todoSubject.next({
+        todoItems: this.listOftodos
+    });
+}
+						</code></pre>
+
+					<pre class="fragment"><code class="TypeScript" data-trim contenteditable>
+this._todoService.getStream()
+.subscribe(next => {
+    this.todoListLocal = next;
+});
+						</code></pre>
+				</section>
+				<section>
+					A active user stream that all new subscribers need the last value from
+					<pre class="fragment"><code class="TypeScript" data-trim contenteditable>
+private userSubject: BehaviorSubject = new BehaviorSubject("Guest")
+newUser(newUser){
+    this.userSubject.next(newUser);
+}
+						</code></pre>
+					<pre class="fragment"><code class="TypeScript" data-trim contenteditable>
+this._todoService.getUserStream().subscribe(next => {
+    console.log(next);
+});
+						</code></pre>
+				</section>
+			</section>
+
+			<section>
+				Remember to unsubscribe, espessially in a Single Page Application
+				<pre><code class="TypeScript" data-trim contenteditable>
+						let subscription = observable.subscribe(......)
+
+						//Some time later, for example on component destoy/unmount
+
+						subscription.unsubscribe()
+					</code></pre>
+			</section>
+
+
+
+			<section>
+				<h2>
+					Reactive Extentions
+				</h2>
+				RxJS<br />
+				<p class="fragment">
+					<img class="stretch" data-src="content/wow.gif">
+				</p>
+			</section>
+
+			<section>
+				<section>
+					<h2>Do not overuse RxJS</h2>
+				</section>
+				<section>
+					Only where it providesas a benefit, and for the most part limited to async code execution
+				</section>
+
+			</section>
+
+			<!-- <section>
+					Async/await is NOT a part of this
+					<pre><code class="TypeScript" data-trim contenteditable>
+async function getData() {
+    return await getDataFromBackend();
+}
+					</code></pre>
+				</section> -->
+
+
+			<section>
+				Jan Greger Hemb <br />
+				www.github.com/JGH153<br />
+				<a href="http://reactivex.io/" target="_blank">reactivex.io</a><br />
+				<a href="http://reactivex.io/rxjs/" target="_blank">reactivex.io/rxjs</a>
+			</section>
+
+			<section>
+				Questions?
+				<img class="stretch" data-src="content/questions.gif">
+			</section>
+
+			<section>
+				<section>
+					Angular 2/4/5
+				</section>
+				<section>
+					HTTP requests in Angular 2/4 is an observable
+				</section>
+				<section>
+					Replace Event emitter with subjects, or observables if possible
+				</section>
+			</section>
+
+			<section>
+				.fromPromise()
+			</section>
+
+			<section>
+				<section>
+					Observable combine operators
+				</section>
+
+				<section>
+					Have a series of observables execute in sequence
+					<pre class="fragment"><code class="TypeScript" data-trim contenteditable>
+const allObservables = Observable.concat(
+    Observable.interval(300).take(1).map(next => "Timer 1"),
+    Observable.interval(400).take(1).map(next => "Timer 2"),
+    Observable.interval(200).take(1).map(next => "Timer 3"),
+).subscribe(next => {
+    console.log(next)
+})
+						</code></pre>
+				</section>
+
+				<section>
+					Have several observables race each other and only recive from the first to finish
+					<pre class="fragment"><code class="TypeScript" data-trim contenteditable>
+	const race = Observable.race(
+	    Observable.interval(700).map(next => "Timer 1"),
+	    this._http.get("www.ulv.no")
+	)
+	.take(1)
+	.subscribe(next => {
+	    console.log("Winner: " + next)
+	})
+						</code></pre>
+				</section>
+
+			</section>
+
+			<section>
+				<section>
+					More Operators!
+				</section>
+				<section>
+					.distinct() and .distinctUntilChanged()
+				</section>
+			</section>
+
+
+			<section>
+
+				<section>
+					Simple example
+					<iframe class="stretch" data-src="http://localhost:4200/"></iframe>
+				</section>
+
+				<section>
+					<pre><code class="TypeScript" data-trim contenteditable>
+	todoSubject: Subject = new Subject();
+
+	pushToStream(todoListChanged){
+	    setTimeout(() => {
+	        this.todoSubject.next({
+	            editId: this.editObjectId,
+	            addItemActive: this.addItemActive,
+	            todoListChanged: todoListChanged,
+	            todoItems: this.listOftodos
+	        });
+	    }, 0);
+	}
+						</code></pre>
+				</section>
+
+				<section>
+					Simple example
+					<iframe class="stretch" data-src="http://localhost:4200/"></iframe>
+				</section>
+
+				<section>
+					TodoListComponent
+					<pre><code class="TypeScript" data-trim contenteditable>
+	this._todoService.getStream()
+	.filter(current => current.todoListChanged)
+	.map(current => {
+	    return current.todoItems;
+	})
+	.subscribe(next => {
+	    this.todoListLocal = next;
+	});
+						</code></pre>
+				</section>
+
+				<section>
+					Simple example
+					<iframe class="stretch" data-src="http://localhost:4200/"></iframe>
+				</section>
+			</section>
+
+			<section>
+				This page is intentionally left blank
+			</section>
+
+		</div>
+	</div>
+
+	<script src="lib/js/head.min.js"></script>
+	<script src="js/reveal.js"></script>
+
+	<script>
+		// More info about config & dependencies:
+		// - https://github.com/hakimel/reveal.js#configuration
+		// - https://github.com/hakimel/reveal.js#dependencies
+		Reveal.initialize({
+			history: true,
+			dependencies: [
+				{ src: 'plugin/markdown/marked.js' },
+				{ src: 'plugin/markdown/markdown.js' },
+				{ src: 'plugin/notes/notes.js', async: true },
+				{ src: 'plugin/highlight/highlight.js', async: true, callback: function () { hljs.initHighlightingOnLoad(); } }
+			]
+		});
+	</script>
+</body>
+
+</html>
