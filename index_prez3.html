@@ -21,6 +21,12 @@
 		link.href = window.location.search.match(/print-pdf/gi) ? 'css/print/pdf.css' : 'css/print/paper.css';
 		document.getElementsByTagName('head')[0].appendChild(link);
 	</script>
+
+	<style>
+		.rxjsc {
+			color: #C1185A;
+		}
+	</style>
 </head>
 
 <body>
@@ -28,7 +34,7 @@
 		<div class="slides">
 			<section>
 				<h2>Reactive Extentions</h2>
-				RxJS
+				<span class="rxjsc">RxJS</span>
 			</section>
 
 			<section>
@@ -138,18 +144,16 @@ console.log(generator.next().value); // 15
 			<section>
 
 				<section>
-					Observable
+					<h3>Observable</h3>
 					<pre><code class="TypeScript" data-trim contenteditable>
-	of(42, 200).subscribe(next => {
-		console.log(next); 
-		// 42
-		// 200
-	});
+of(42, 200).subscribe(next => {
+	console.log(next); // 42, 200
+});
 						</code></pre>
 				</section>
 
 				<section>
-					Observable
+					<h3>Observable</h3>
 					<pre><code class="TypeScript" data-trim contenteditable>
 	var myObservable =  new Observable(observer => {
 	    observer.next(42);  // "return" a value instantly
@@ -159,13 +163,11 @@ console.log(generator.next().value); // 15
 	});
 
 	myObservable.subscribe(next => {
-		console.log(next) 
-		// 42, 
-		// 200 (after 1000ms)
+		console.log(next); // 42, 200 (after 1000ms)
 	});
 						</code></pre>
 				</section>
-				<section>
+				<!-- <section>
 					Promises vs Observable syntax
 
 					<pre><code class="TypeScript" data-trim contenteditable>
@@ -180,10 +182,10 @@ observable.subscribe(
     completeFunction
 )
 						</code></pre>
-				</section>
+				</section> -->
 
 				<section>
-					Observable and observers<br />
+					<h3>Observable and observers</h3>
 					Observers subscribe to observables
 
 					<pre><code class="TypeScript" data-trim contenteditable>
@@ -205,11 +207,11 @@ var myObservable =  new Observable(observer => {
 });
 
 myObservable.subscribe(next => {
-    console.log("S1:" + next)
+	console.log("S1:" + next); // S1:42, S1:200
 });
 
 myObservable.subscribe(next => {
-    console.log("S2:" + next)
+	console.log("S2:" + next); // S2:42, S2:200
 });
 						</code></pre>
 				</section>
@@ -225,11 +227,11 @@ var myObservable =  new Observable(observer => {
 }).share();
 
 myObservable.subscribe(next => {
-    console.log("S1:" + next)
+	console.log("S1:" + next); // S1:42, S1:200
 });
 
 myObservable.subscribe(next => {
-    console.log("S2:" + next) //42 is never received
+	console.log("S2:" + next); // S2:200
 });
 						</code></pre>
 				</section>
@@ -249,31 +251,40 @@ myObservable.subscribe(next => {
 
 			<section>
 				<section>
-					Creating Observables
+					<h2>Creating Observables</h2>
 				</section>
 				<section>
-					.of(.....)
+					of( values )
 					<pre><code class="TypeScript" data-trim contenteditable>
-let myObservable = Observable.of(1, 2, 3);
-myObservable.subscribe(next => {
-    console.log(next) //1, 2, 3
+of(1, 2, 3)
+.subscribe(next => {
+    console.log(next); // 1, 2, 3
 })
 						</code></pre>
 				</section>
 				<section>
-					.fromEvent(element, evenet)
+					from( array, promise, or iterable )
 					<pre><code class="TypeScript" data-trim contenteditable>
-Observable.fromEvent(window, 'mousemove')
+from([1, 2, 3])
 .subscribe(next => {
-    console.log("Mouse movement")
+    console.log(next); // 1, 2, 3
+})
+						</code></pre>
+				</section>
+				<section>
+					fromEvent(element, evenet)
+					<pre><code class="TypeScript" data-trim contenteditable>
+fromEvent(window, 'mousemove')
+.subscribe(next => {
+    console.log("Mouse movement");
 });
 						</code></pre>
 				</section>
 				<section>
-					.interval(time_ms)
+					interval( time_ms )
 					<pre><code class="TypeScript" data-trim contenteditable>
-let myObservable = Observable.interval(300);
-myObservable.subscribe(next => {
+interval(1000)
+.subscribe(next => {
     console.log(next) //0, 1, 2, 3....
 })
 						</code></pre>
@@ -283,10 +294,9 @@ myObservable.subscribe(next => {
 					<pre><code class="TypeScript" data-trim contenteditable>
 const myObservable = new Observable(observer => {
     let counter = 0;
-    let interval = setInterval(() => {
+    setInterval(() => {
         observer.next( counter++ );
-    }, 300);
-    return () => { clearInterval(interval) }
+    }, 1000);
 });
 myObservable.subscribe(next => {
     console.log(next) // 0, 1, 2, 3.....
@@ -297,64 +307,66 @@ myObservable.subscribe(next => {
 
 
 			<section>
-				Streams and time axis<br />
+				<h2>Streams and time axis</h2>
 				<img class="stretch" data-src="content/stream.png">
 			</section>
 
 
 			<section>
 				<section>
-					Operators
+					<h3>Operators</h3>
 					<pre><code class="TypeScript" data-trim contenteditable>
-							myObservable/mySubject
-							.
+							myObservable
+							.pipe( operator )
 							.subscribe
 
-							.map()
-							.filter()
-							.skip()
-							.delay()
-							.throttleTime()
-							.debounceTime()
-							.switchMap()
-							.retry()
-							.catch()
+							Operators
+							map()
+							filter()
+							skip()
+							delay()
+							throttleTime()
+							debounceTime()
+							switchMap()
+							retry()
+							catch()
 						</code></pre>
 				</section>
 
 				<section>
-					<a href="http://reactivex.io/documentation/operators/map.html" target="_blank">.map(function)</a>
+					<a href="http://reactivex.io/documentation/operators/map.html" target="_blank">map(function)</a>
 					<img class="stretch" data-src="content/operators/map.png">
 				</section>
 
 				<section>
-					.filter(function)
+					filter(function)
 					<img class="stretch" data-src="content/operators/filter.png">
 				</section>
 
 				<section>
-					.skip(number)<br />
-					.take(number)
+					skip(number)<br />
+					take(number)
 					<img class="stretch" data-src="content/operators/skip.png">
 				</section>
 
 				<section>
-					.delay(ms)
+					delay(ms)
 					<img class="stretch" data-src="content/operators/delay.png">
 				</section>
 
 				<section>
-					.throttleTime(ms)
+					throttleTime(ms)
 					<img class="stretch" data-src="content/operators/throttleTime.png">
 				</section>
 
 				<section>
-					.debounceTime(ms)
+					debounceTime(ms)
 					<img class="stretch" data-src="content/operators/debounce.png">
 				</section>
 
 				<section>
-					.switchMap(function => { return Observable to switch })
+					<!-- TODO improve! -->
+					switchMap(function => { return Observable to switch })
 					<img class="stretch" data-src="content/operators/switchmap.png">
 				</section>
 
@@ -367,13 +379,17 @@ myObservable.subscribe(next => {
 					<img class="stretch" data-src="content/operators/retry.png">
 				</section>
 
-				<section>
+				<!-- <section>
 					.catch(return new Observer)
 					<img class="stretch" data-src="content/operators/catch.png">
-				</section>
+				</section> -->
 
 
 
+			</section>
+
+			<section>
+				HttpClient in Angular works with observables
 			</section>
 
 
@@ -385,10 +401,8 @@ myObservable.subscribe(next => {
 			<section>
 				Creating a timer using observables that executes each second, for 5 seconds
 				<pre class="fragment"><code class="TypeScript" data-trim contenteditable>
-let observable = Observable.interval(1000);
-
-let subscription = observable
-.take(5)
+interval(1000)
+.pipe(take(5))
 .subscribe(next => {
     console.log(next)
 });
@@ -416,11 +430,13 @@ myObservable
 			<section>
 				Polling an unstable backend that crashes all the time
 				<pre class="fragment"><code class="TypeScript" data-trim contenteditable>
-Observable.interval(5000)
-.switchMap(() => {
-    return this._http.get("www.ulv.no")
-	.catch(error => Observable.empty())
-})
+interval(5000)
+.pipe(
+	switchMap(() => {
+    		return this.http.get("www.ulv.no")
+		.catch(error => Observable.empty())
+	})
+)
 .subscribe(data => {
     console.log(data);
 })
@@ -430,26 +446,32 @@ Observable.interval(5000)
 			<section>
 				Only execute some code after no mouse movement for 1 second
 				<pre class="fragment"><code class="TypeScript" data-trim contenteditable>
-Observable.fromEvent(window, 'mousemove')
-.debounceTime(1000)
+fromEvent(window, 'mousemove')
+.pipe(debounceTime(1000))
 .subscribe(next => {
-    console.log("No movment for one sec!")
+    console.log("No movement for one sec!")
 });
 					</code></pre>
 			</section>
 
 			<section>
-				Subject (Active observables)<br />
-				<span class="fragment">
+				<h2>Subject</h2>
+				<p class="fragment">
+					Active observables
+				</p>
+				<p class="fragment">
 					Shared by default
-				</span>
+				</p>
 			</section>
 
 			<section>
 				Observable with next inside
 				<pre><code class="TypeScript" data-trim contenteditable>
-var myObservable =  new Observable(observer => {
+new Observable(observer => {
     observer.next(42);
+})
+.subscribe(next => {
+    console.log(next); // 42
 });
 					</code></pre>
 			</section>
@@ -461,13 +483,13 @@ var myObservable =  new Observable(observer => {
 let mySubject = new Subject();
 
 mySubject.subscribe(next => {
-    console.log(next)
+    console.log(next); // 42, 200
 });
 
-mySubject.next(42);
+mySubject.next(42); // next is outside!
 
 setTimeout(() => {
-    mySubject.next(500);
+    mySubject.next(200);
 }, 1000);
 					</code></pre>
 
