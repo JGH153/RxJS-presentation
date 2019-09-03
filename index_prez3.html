@@ -26,6 +26,14 @@
 		.rxjsc {
 			color: #C1185A;
 		}
+
+		.slides {
+			width: 80% !important;
+		}
+
+		.large-text {
+			font-size: 100px;
+		}
 	</style>
 </head>
 
@@ -48,7 +56,8 @@
 					<li class="fragment">The best way to work with <span class="rxjsc">async</span> data</li>
 					<li class="fragment"><span class="rxjsc">Observer</span> pattern</li>
 					<!-- <li class="fragment">A function is executed each time new data arrives</li> -->
-					<li class="fragment">Can <span class="rxjsc">manipulate</span> data before it arrives, functionally</li>
+					<li class="fragment">Can <span class="rxjsc">manipulate</span> data before it arrives, functionally
+					</li>
 					<li class="fragment">Think of <span class="rxjsc">RxJS</span> as Lodash for events</li>
 				</ui>
 			</section>
@@ -147,37 +156,6 @@ console.log(generator.next().value); // 15
 				</section>
 
 				<section>
-					<h3>Search box</h3>
-					<pre class="fragment"><code class="TypeScript" data-trim contenteditable>
-						<input type="text" placeholder="Search for something">
-					</code></pre>
-					<pre class="fragment"><code class="TypeScript" data-trim contenteditable>
-						@ViewChild('searchBox') searchBox;
-
-						const event = fromEvent(searchBox, 'keydown')
-					</code></pre>
-					<pre class="fragment"><code class="TypeScript" data-trim contenteditable>
-							event.subscribe({
-								next: keyPressed => {
-									console.log(keyPressed);
-								}
-							});
-					</code></pre>
-				</section>
-
-				<section>
-					<h3>.subscribe</h3>
-					<pre class="fragment"><code class="TypeScript" data-trim contenteditable>
-						.subscribe({
-							next(x) { console.log('got value ' + x); },
-							error(err) { console.error('Error: ' + err); },
-							complete() { console.log('done'); }
-						});
-					</code></pre>
-						
-				</section>
-
-				<section>
 					<h3>Data sources</h3>
 					<pre class="fragment"><code class="TypeScript" data-trim contenteditable>
 						fromEvent(searchBox, 'keydown')
@@ -190,6 +168,9 @@ console.log(generator.next().value); // 15
 						http.get // in Angular
 					</code></pre>
 					<pre class="fragment"><code class="TypeScript" data-trim contenteditable>
+						webSocket("ws://localhost:8081")
+					</code></pre>
+					<pre class="fragment"><code class="TypeScript" data-trim contenteditable>
 						of(1, 2, 3) // get each item independently
 					</code></pre>
 					<pre class="fragment"><code class="TypeScript" data-trim contenteditable>
@@ -199,20 +180,47 @@ console.log(generator.next().value); // 15
 				</section>
 
 				<section>
-					<h3>Observable</h3>
-					<pre><code class="TypeScript" data-trim contenteditable>
-of(42, 200).subscribe(next => {
-	console.log(next); // 42, 200
-});
-						</code></pre>
+					<h3>.subscribe</h3>
+					<p class="fragment">Callback for each new value</p>
+					<pre class="fragment"><code class="TypeScript" data-trim contenteditable>
+						dataSources.subscribe({
+							next(value){ console.log('got value ' + value); },
+							error(err) { console.error('Error: ' + err); },
+							complete() { console.log('done'); }
+						});
+					</code></pre>
+				</section>
+
+				<section>
+					<h3>Search box</h3>
+					<pre class="fragment"><code class="TypeScript" data-trim contenteditable>
+						<input type="text" placeholder="Search for something">
+					</code></pre>
+					<pre class="fragment"><code class="TypeScript" data-trim contenteditable>
+						@ViewChild('searchBox') searchBox;
+
+						const dataSource = fromEvent(searchBox, 'keydown')
+					</code></pre>
+					<pre class="fragment"><code class="TypeScript" data-trim contenteditable>
+							dataSource.subscribe({
+								next: keyPressed => {
+									console.log(keyPressed);
+								}
+							});
+					</code></pre>
 				</section>
 
 				<section>
 					<h3>Observable</h3>
 					<pre><code class="TypeScript" data-trim contenteditable>
+of(42, 200).subscribe(next => {
+	console.log(next); // 42, 200
+});
+					</code></pre>
+					<pre class="fragment"><code class="TypeScript" data-trim contenteditable>
 	var myObservable =  new Observable(observer => {
 	    observer.next(42);  // "return" a value instantly
-	    observer.next(200);  // "return" a value instantly
+	    observer.next(200); // "return" a value instantly
 	});
 
 	myObservable.subscribe(next => {
@@ -243,12 +251,12 @@ of(42, 200).subscribe(next => {
 				<section>
 					<h3>Nothing happens until someone subscribes</h3>
 					<pre class="fragment"><code class="TypeScript" data-trim contenteditable>
-						http.get('vg.no') // nothing
+						http.get('vg.no') // nothing (Cold)
 					</code></pre>
 					<pre class="fragment"><code class="TypeScript" data-trim contenteditable>
-						http.get('vg.no').subscribe(...) // get call is executed
+						http.get('vg.no').subscribe(...) // get call is executed (Hot)
 					</code></pre>
-					<h3 class="fragment">Hot vs Cold</h3>
+					<h3 class="fragment">Cold vs Hot</h3>
 				</section>
 
 				<section>
@@ -299,6 +307,15 @@ fromEvent(window, 'mousemove')
 						</code></pre>
 				</section>
 				<section>
+					Web Socket
+					<pre><code class="TypeScript" data-trim contenteditable>
+						webSocket("ws://localhost:8081")
+						.subscribe(next => {
+							console.log(next) // web socket message
+						})
+					</code></pre>
+				</section>
+				<section>
 					interval( time_ms )
 					<pre><code class="TypeScript" data-trim contenteditable>
 interval(1000)
@@ -321,10 +338,31 @@ myObservable.subscribe(next => {
 })
 						</code></pre>
 				</section>
+				<section>
+					The same result
+					<pre><code class="TypeScript" data-trim contenteditable>
+interval(1000)
+.subscribe(next => {
+    console.log(next) //0, 1, 2, 3....
+})
+					</code></pre>
+					<pre><code class="TypeScript" data-trim contenteditable>
+const myObservable = new Observable(observer => {
+    let counter = 0;
+    setInterval(() => {
+        observer.next( counter++ );
+    }, 1000);
+});
+myObservable.subscribe(next => {
+    console.log(next) // 0, 1, 2, 3.....
+})
+						</code></pre>
+				</section>
+
 			</section>
 
 			<section>
-				<h3>But what if you want to <i class="rxjsc">change</i> the data before it arrives?</h3>
+				<h3>But what if you want to <span class="rxjsc">change</span> the data before it arrives?</h3>
 			</section>
 
 
@@ -338,7 +376,7 @@ myObservable.subscribe(next => {
 				<section>
 					<h3>Operators</h3>
 					<pre><code class="TypeScript" data-trim contenteditable>
-							myObservable
+							dataSource
 							.pipe( operator, operator, operator... )
 							.subscribe
 
@@ -394,7 +432,8 @@ myObservable.subscribe(next => {
 
 				<section>
 					<h2>RxJS on next level</h2>
-					<p class="fragment">Using result from one observable to change to another</p>
+					<p class="fragment">Using result from one observable to <span class="rxjsc">switch</span> to another
+					</p>
 					<p class="fragment">Getting user info in order to retrieve something else</p>
 				</section>
 
@@ -426,9 +465,9 @@ myObservable.subscribe(next => {
 			</section>
 
 			<section>
-					<h3>Search box</h3>
+				<h3>Search box</h3>
 
-					<pre class=""><code class="TypeScript" data-trim contenteditable>
+				<pre class=""><code class="TypeScript" data-trim contenteditable>
 						const event = fromEvent(searchBox, 'keydown')
 						event
 						.subscribe({
@@ -437,7 +476,7 @@ myObservable.subscribe(next => {
 							}
 						});
 					</code></pre>
-					<pre class="fragment"><code class="TypeScript" data-trim contenteditable>
+				<pre class="fragment"><code class="TypeScript" data-trim contenteditable>
 						const event = fromEvent(searchBox, 'keydown')
 						event.pipe(debounceTime(500)) // half a second
 						.subscribe({
@@ -447,13 +486,7 @@ myObservable.subscribe(next => {
 						});
 					</code></pre>
 
-				</section>
-
-
-			<!-- <section>
-					Overloaded
-					<img class="stretch" data-src="content/overload.gif">
-				</section> -->
+			</section>
 
 			<section>
 				Creating a timer that executes each second, for 5 seconds
@@ -484,7 +517,7 @@ myObservable
 					</code></pre>
 				</section> -->
 
-				
+
 			<section>
 				Only execute some code after no mouse movement for 1 second
 				<pre class="fragment"><code class="TypeScript" data-trim contenteditable>
@@ -513,12 +546,36 @@ interval(5000)
 			</section>
 
 			<section>
+				Map server response <span class="rxjsc">before</span> passing it on
+				<pre class="fragment"><code class="TypeScript" data-trim contenteditable>
+					this.http.get('localhost:1337/api')
+					.pipe(map(blogPost => {
+						return {
+							...data,
+							addedDate = new Date(blogPost.addedDate)
+						}
+					}))
+					.subscribe(blogPost => {
+						console.log(blogPost);
+						// blogPost.addedDate is now a date even of backend returned a string
+					})
+				</code></pre>
+			</section>
+
+			<section>
+				But what if you want to <span class="rxjsc">control</span> when data is emitted?
+			</section>
+
+			<section>
 				<h2>Subject</h2>
 				<p class="fragment">
-					Active observables
+					<span class="rxjsc">Active</span> observables
 				</p>
 				<p class="fragment">
-					Shared by default
+					<span class="rxjsc">Shared</span> by default
+				</p>
+				<p class="fragment">
+					Multicasted to all observers
 				</p>
 			</section>
 
@@ -549,44 +606,39 @@ mySubject.subscribe(next => {
 	console.log(next); // 200
 });
 
-setTimeout(() => {
-    mySubject.next(200);
-}, 1000);
+mySubject.next(200);
+
 					</code></pre>
 
 				<p class="fragment">
-					Works really similar to EventEmitter
+					Works really similar to <span class="rxjsc">EventEmitter</span>
 				</p>
 
 			</section>
 
 			<section>
+				<pre><code class="TypeScript" data-trim contenteditable>
+					// Observable
+					const myObservable = new Observable(observer => {
+						observer.next(42);
+					})
+
+					// Subject
+					let mySubject = new Subject();
+					mySubject.next(42);
+				</code></pre>
+			</section>
+
+			<!-- <section>
 				<section>
 					Easy to use it wrong
 					<img class="stretch" data-src="content/wrong.gif">
 				</section>
-				<!-- <section>
-						Incorrect
-						<pre><code class="TypeScript" data-trim contenteditable>
-const subject = new Subject();
-button.addEventListener(‘click’, () => subject.next('click');
-subject.subscribe(x => console.log(x));
-						</code></pre>
-						<br />
-						<span class="fragment">Correct</span>
-						<pre class="fragment"><code class="TypeScript" data-trim contenteditable>
-const clicks = new Observable(observer => {
-    button.addEventListener('click', evt => observer.next(evt));
-});
-						</code></pre>
-
-					</section> -->
-
-			</section>
+			</section> -->
 
 			<section>
 				<h3>Behavior Subject</h3>
-				Subject variables, with default value <br />
+				Subject <span class="rxjsc">variable</span>, with a current value<br />
 				<pre class="fragment"><code class="TypeScript" data-trim contenteditable>
 username: BehaviorSubject = new BehaviorSubject("Greger");
 
@@ -601,6 +653,10 @@ username.subscribe(next => {
 })
 					</code></pre>
 
+				<blockquote class="fragment">
+					A stream of birthdays is a Subject, but the stream of a person's age would be a BehaviorSubject.
+				</blockquote>
+
 			</section>
 
 			<section>
@@ -608,7 +664,7 @@ username.subscribe(next => {
 				<h3 class="fragment">Async Subject</h3>
 			</section>
 
-			<section>
+			<!-- <section>
 				<h3>When to use a subject over observales?</h3>
 				<p class="fragment">
 					When you need a shared observable that can push/next() values from outside the observable
@@ -616,7 +672,7 @@ username.subscribe(next => {
 				<p class="fragment">
 					When need behavior of replay or behavior subject
 				</p>
-			</section>
+			</section> -->
 
 			<!-- <section>
 
@@ -637,7 +693,7 @@ asyncSubject.complete();
 
 				</section> -->
 
-			<section>
+			<!-- <section>
 				<section>
 					Subject examples
 				</section>
@@ -675,10 +731,10 @@ this._todoService.getUserStream().subscribe(next => {
 });
 						</code></pre>
 				</section>
-			</section>
+			</section> -->
 
 			<section>
-				Remember to unsubscribe, espessially in a Single Page Application
+				Remember to <span class="rxjsc">unsubscribe</span>, espessially in a Single Page Application
 				<pre><code class="TypeScript" data-trim contenteditable>
 						let subscription = observable.subscribe(......)
 
@@ -694,7 +750,7 @@ this._todoService.getUserStream().subscribe(next => {
 				<h2>
 					Reactive Extentions
 				</h2>
-				RxJS<br />
+				<span class="rxjsc large-text">RxJS</span><br />
 				<p class="fragment">
 					<img class="stretch" data-src="content/wow.gif">
 				</p>
@@ -705,7 +761,8 @@ this._todoService.getUserStream().subscribe(next => {
 					<h2>Do not overuse RxJS</h2>
 				</section>
 				<section>
-					Only where it provides a benefit, and for the most part limited to async code execution
+					Only where it provides a <span class="rxjsc">benefit</span>, and for the most part limited to async
+					code execution
 				</section>
 
 			</section>
@@ -718,7 +775,7 @@ this._todoService.getUserStream().subscribe(next => {
 			</section>
 
 			<section>
-				Questions?
+				Questions?<br>
 				<img class="stretch" data-src="content/questions.gif">
 			</section>
 
