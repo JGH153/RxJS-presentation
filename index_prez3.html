@@ -31,6 +31,10 @@
 			width: 80% !important;
 		}
 
+		.med-text {
+			font-size: 60px;
+		}
+
 		.large-text {
 			font-size: 100px;
 		}
@@ -42,7 +46,7 @@
 		<div class="slides">
 			<section>
 				<h2>Reactive Extentions</h2>
-				<span class="rxjsc">RxJS</span>
+				<span class="rxjsc large-text">RxJS</span>
 			</section>
 
 			<section>
@@ -71,22 +75,23 @@
 			</section>
 
 			<section>
-				<h1>Pull</h1>
-			</section>
+				<section>
+					<h1>Pull</h1>
+				</section>
 
-			<section>
-				Function
-				<pre><code class="TypeScript" data-trim contenteditable>
+				<section>
+					Function
+					<pre><code class="TypeScript" data-trim contenteditable>
 						function myFunction(someVal){
 						    return someVal * 2
 						}
 						myFunction(5) // 10
 					</code></pre>
-			</section>
+				</section>
 
-			<section>
-				Iterators and generators
-				<pre><code class="TypeScript" data-trim contenteditable>
+				<section>
+					Iterators and generators
+					<pre><code class="TypeScript" data-trim contenteditable>
 function* myFunction() {
     yield 5;
     yield 10;
@@ -99,13 +104,14 @@ console.log(generator.next().value); // 5
 console.log(generator.next().value); // 10
 console.log(generator.next().value); // 15
 					</code></pre>
+				</section>
 			</section>
 
 			<section>
-				<h1>Push</h1>
-			</section>
+				<section>
+					<h1>Push</h1>
+				</section>
 
-			<section>
 				<section>
 					Promise
 					<pre><code class="TypeScript" data-trim contenteditable>
@@ -180,7 +186,7 @@ console.log(generator.next().value); // 15
 					<pre class="fragment"><code class="TypeScript" data-trim contenteditable>
 						from(somePromise) // Create from promise
 					</code></pre>
-					<h3 class="fragment">Any many more</h3>
+					<h3 class="fragment">And many more</h3>
 				</section>
 
 				<section>
@@ -281,7 +287,7 @@ of(42, 200).subscribe(next => {
 
 			<section>
 				<section>
-					<h2>Creating Observables</h2>
+					<h2>Complete examples</h2>
 				</section>
 				<section>
 					of( values )
@@ -362,20 +368,16 @@ myObservable.subscribe(next => {
 })
 						</code></pre>
 				</section>
-
 			</section>
 
 			<section>
 				<h3>But what if you want to <span class="rxjsc">change</span> the data before it arrives?</h3>
-				
 			</section>
-
 
 			<section>
 				<h2>Streams and time axis</h2>
 				<img class="stretch" data-src="content/stream.png">
 			</section>
-
 
 			<section>
 				<section>
@@ -433,14 +435,14 @@ myObservable.subscribe(next => {
 					<!-- TODO improve! -->
 					switchMap(function => { return Observable to switch })
 					<img class="stretch" data-src="content/operators/switchmap.png">
+					<h2 class="fragment">RxJS on next level</h2>
 				</section>
-
+				<!-- 
 				<section>
-					<h2>RxJS on next level</h2>
 					<p class="fragment">Using result from one observable to <span class="rxjsc">switch</span> to another
 					</p>
 					<p class="fragment">Getting user info in order to retrieve something else</p>
-				</section>
+				</section> -->
 
 				<section>
 					<h3>Error Handling</h3>
@@ -473,20 +475,19 @@ myObservable.subscribe(next => {
 				<h3>Search box</h3>
 
 				<pre class=""><code class="TypeScript" data-trim contenteditable>
-						const event = fromEvent(searchBox, 'keydown')
-						event
+						fromEvent(searchBox, 'keydown')
 						.subscribe({
 							next: keyPressed => {
-								console.log(keyPressed);
+								this.http.get('localhost:1337/api').subscribe(...)
 							}
 						});
 					</code></pre>
 				<pre class="fragment"><code class="TypeScript" data-trim contenteditable>
-						const event = fromEvent(searchBox, 'keydown')
-						event.pipe(debounceTime(500)) // half a second
+						fromEvent(searchBox, 'keydown')
+						pipe(debounceTime(500)) // half a second
 						.subscribe({
 							next: keyPressed => {
-								console.log(keyPressed); // not instant
+								this.http.get('localhost:1337/api').subscribe(...);
 							}
 						});
 					</code></pre>
@@ -557,19 +558,20 @@ interval(5000)
 					.pipe(map(blogPost => {
 						return {
 							...data,
-							addedDate = new Date(blogPost.addedDate)
+							addedDate = new Date(blogPost.addedDate as string)
 						}
 					}))
 					.subscribe(blogPost => {
 						console.log(blogPost);
-						// blogPost.addedDate is now a date even of backend returned a string
+						// blogPost.addedDate is now a date
+						// even if backend returned a string
 					})
 				</code></pre>
 			</section>
 
 			<section>
 				Only get the relevant web socket messages and data <br>
-				+ max one each second
+				+ max one per second
 				<pre class="fragment"><code class="TypeScript" data-trim contenteditable>
 					webSocket("ws://localhost:8081")
 					.pipe(
@@ -597,7 +599,7 @@ interval(5000)
 					<span class="rxjsc">Shared</span> by default
 				</p>
 				<p class="fragment">
-					Multicasted to all observers
+					Multicasted to all subscribers
 				</p>
 			</section>
 
@@ -766,7 +768,16 @@ this._todoService.getUserStream().subscribe(next => {
 					</code></pre>
 			</section>
 
+			<section>
+				<section>
+					<h2>Do not overuse RxJS</h2>
+				</section>
+				<section>
+					Only where it provides a <span class="rxjsc">benefit</span>, and for the most part limited to async
+					code execution
+				</section>
 
+			</section>
 
 			<section>
 				<h2>
@@ -778,16 +789,6 @@ this._todoService.getUserStream().subscribe(next => {
 				</p>
 			</section>
 
-			<section>
-				<section>
-					<h2>Do not overuse RxJS</h2>
-				</section>
-				<section>
-					Only where it provides a <span class="rxjsc">benefit</span>, and for the most part limited to async
-					code execution
-				</section>
-
-			</section>
 
 			<section>
 				Jan Greger Hemb <br />
