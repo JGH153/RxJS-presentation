@@ -50,6 +50,10 @@
 			</section>
 
 			<section>
+				<img class="stretch" data-src="content/pondus/lazy.jpg">
+			</section>
+
+			<section>
 				<h3>RxJS in a nutshell</h3>
 				<ui>
 					<li class="fragment">THE library for <span class="rxjsc">event driven</span> programming</li>
@@ -363,6 +367,7 @@ myObservable.subscribe(next => {
 
 			<section>
 				<h3>But what if you want to <span class="rxjsc">change</span> the data before it arrives?</h3>
+				
 			</section>
 
 
@@ -529,7 +534,7 @@ fromEvent(window, 'mousemove')
 				</code></pre>
 			</section>
 
-			<section>
+			<!-- <section>
 				Polling an unstable backend that crashes all the time
 				<pre class="fragment"><code class="TypeScript" data-trim contenteditable>
 interval(5000)
@@ -543,7 +548,7 @@ interval(5000)
     console.log(data);
 })
 					</code></pre>
-			</section>
+			</section> -->
 
 			<section>
 				Map server response <span class="rxjsc">before</span> passing it on
@@ -563,7 +568,24 @@ interval(5000)
 			</section>
 
 			<section>
+				Only get the relevant web socket messages and data <br>
+				+ max one each second
+				<pre class="fragment"><code class="TypeScript" data-trim contenteditable>
+					webSocket("ws://localhost:8081")
+					.pipe(
+						filter(message => message.type === 'action'),
+						map(message => message.data),
+						throttleTime(1000)
+					)
+					.subscribe(message => {
+						console.log(message); // max one relevant message per second
+					})
+				</code></pre>
+			</section>
+
+			<section>
 				But what if you want to <span class="rxjsc">control</span> when data is emitted?
+				<img class="stretch" data-src="content/pondus/whatif.jpg">
 			</section>
 
 			<section>
@@ -776,7 +798,7 @@ this._todoService.getUserStream().subscribe(next => {
 
 			<section>
 				Questions?<br>
-				<img class="stretch" data-src="content/questions.gif">
+				<img class="stretch" data-src="content/pondus/question.jpg">
 			</section>
 
 			<section>
