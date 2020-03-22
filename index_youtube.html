@@ -58,7 +58,7 @@
 			</section>
 
 			<section>
-				<h3>RxJS in a nutshell</h3>
+				<h3 class="normalcase"><span class="rxjsc">RxJS</span> in a nutshell</h3>
 				<ui>
 					<li class="fragment">THE library for <span class="rxjsc">event driven</span> programming</li>
 					<li class="fragment">The best way to work with <span class="rxjsc">async</span> data</li>
@@ -204,10 +204,10 @@ console.log(generator.next().value); // 15
 				<section>
 					<h3>Search box</h3>
 					<pre class="fragment"><code class="TypeScript" data-trim contenteditable>
-						<input type="text" placeholder="Search for something">
+						<input type="text" placeholder="Search for something" id="box">
 					</code></pre>
 					<pre class="fragment"><code class="TypeScript" data-trim contenteditable>
-						@ViewChild('searchBox') searchBox;
+						const searchBox = document.getElementById('box');
 
 						const dataSource = fromEvent(searchBox, 'keydown')
 					</code></pre>
@@ -241,7 +241,7 @@ of(42, 200).subscribe(next => {
 
 				<section>
 					<h3>Each subscription is <span class="rxjsc">independent</span></h3>
-					<pre><code class="TypeScript" data-trim contenteditable>
+					<pre class="fragment"><code class="TypeScript" data-trim contenteditable>
 						myObservable = of(42, 200);
 
 						myObservable.subscribe(next => {
@@ -265,6 +265,9 @@ of(42, 200).subscribe(next => {
 					</code></pre>
 					<pre class="fragment"><code class="TypeScript" data-trim contenteditable>
 						http.get('vg.no').subscribe(...) // http get call is executed (Hot)
+					</code></pre>
+					<pre class="fragment"><code class="TypeScript" data-trim contenteditable>
+						myFunction vs myFunction()
 					</code></pre>
 					<h3 class="fragment">Cold vs Hot</h3>
 				</section>
@@ -501,7 +504,7 @@ myObservable.subscribe(next => {
 interval(1000)
 .pipe(take(5))
 .subscribe(next => {
-    console.log(next)
+    console.log(next) // 0, 1, 2, 3, 4
 });
 					</code></pre>
 			</section>
@@ -654,6 +657,7 @@ mySubject.next(200);
 					let mySubject = new Subject();
 					mySubject.next(42);
 				</code></pre>
+				<p class="fragment">Try to favor Observable over Subject</p>
 			</section>
 
 			<!-- <section>
@@ -667,17 +671,17 @@ mySubject.next(200);
 				<h3>Behavior Subject</h3>
 				Subject <span class="rxjsc">variable</span>, with a current value<br />
 				<pre class="fragment"><code class="TypeScript" data-trim contenteditable>
-username: BehaviorSubject = new BehaviorSubject("Greger");
+username: BehaviorSubject = new BehaviorSubject("Kim");
 
 username.subscribe(next => {
-    console.log(next) //Greger, Tom
-})
+    console.log(next) //Kim, Tom
+});
 
-username.next('Tom')
+username.next('Tom');
 
 username.subscribe(next => {
     console.log(next) // Tom
-})
+});
 					</code></pre>
 
 				<blockquote class="fragment">
@@ -773,12 +777,20 @@ this._todoService.getUserStream().subscribe(next => {
 
 			<section>
 				<section>
-					<h2>Do not overuse RxJS</h2>
-				</section>
-				<section>
-					Only where it provides a <span class="rxjsc">benefit</span>, like events, user actions and http calls
+					<h2 class="normalcase">Do not overuse <span class="rxjsc">RxJS</span></h2>
+					<p class="fragment">
+						Only where it provides a <span class="rxjsc">benefit</span>, like with events, user actions and http calls
+					</p>
+					<!-- <P>
+						RxJS simplifies async code and complidates 
+					</P> -->
 				</section>
 
+			</section>
+
+			<section>
+				<h2 class="normalcase">Might become part of Javascript!</h2>
+				<h3 class="normalcase fragment">ECMAScript Observable</h3>
 			</section>
 
 			<section>
@@ -794,9 +806,8 @@ this._todoService.getUserStream().subscribe(next => {
 
 			<section>
 				Jan Greger Hemb <br />
-				www.github.com/JGH153<br />
-				<a href="http://reactivex.io/" target="_blank">reactivex.io</a><br />
-				<a href="http://reactivex.io/rxjs/" target="_blank">reactivex.io/rxjs</a>
+				<a href="www.github.com/JGH153" target="_blank">www.github.com/JGH153</a><br />
+				<a href="https://rxjs-dev.firebaseapp.com/" target="_blank">rxjs-dev.firebaseapp.com</a><br />
 			</section>
 
 			<section>
