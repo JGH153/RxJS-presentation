@@ -563,7 +563,7 @@ interval(5000)
 						map(blogPost => {
 							return {
 								...data,
-								addedDate = new Date(blogPost.addedDate)
+								addedDate: new Date(blogPost.addedDate)
 							}
 						})
 					)
