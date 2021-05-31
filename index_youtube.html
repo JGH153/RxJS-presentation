@@ -172,7 +172,8 @@ console.log(generator.next().value); // 15
 						fromEvent(window, 'mousemove')
 					</code></pre>
 					<pre class="fragment"><code class="TypeScript" data-trim contenteditable>
-						timer(1000) // 1 sec intervall
+						timer(1000) // 1 sec delay
+						timer(1000, 1000) // 1 sec interval
 					</code></pre>
 					<pre class="fragment"><code class="TypeScript" data-trim contenteditable>
 						http.get // in Angular
@@ -501,7 +502,7 @@ myObservable.subscribe(next => {
 			<section>
 				Creating a <span class="rxjsc">timer</span> that executes each second, for 5 seconds
 				<pre class="fragment"><code class="TypeScript" data-trim contenteditable>
-interval(1000)
+interval(1000, 1000)
 .pipe(take(5))
 .subscribe(next => {
     console.log(next) // 0, 1, 2, 3, 4
@@ -816,7 +817,7 @@ this._todoService.getUserStream().subscribe(next => {
 			</section>
 
 			<section>
-				This page is intentionally left blank
+			 <h1>Curious Programming</h1>
 			</section>
 
 		</div>
